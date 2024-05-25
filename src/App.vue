@@ -1,5 +1,33 @@
-<script setup>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+
 import HelloWorld from './components/HelloWorld.vue'
+
+// Telegram user information
+const userId = ref<number | null>(null);
+const userName = ref<string | null>(null);
+
+// Initialize Telegram WebApp API
+onMounted(() => {
+	if (window.Telegram?.WebApp) {
+		const tg = window.Telegram.WebApp;
+		
+		// Expand the WebApp to fill the entire viewport
+		tg.expand();
+		
+		// Get user information
+		const user = tg.initDataUnsafe.user;
+		
+		if (user) {
+			userId.value = user.id;
+			userName.value = `${user.first_name} ${user.last_name}`;
+		} else {
+			console.error('User information is not available.');
+		}
+	} else {
+		console.error('Telegram WebApp API is not available.');
+	}
+});
 </script>
 
 <template>
@@ -10,6 +38,9 @@ import HelloWorld from './components/HelloWorld.vue'
     <a href="https://vuejs.org/" target="_blank">
       <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
     </a>
+	  
+	  <p v-if="userId">User ID: {{ userId }}, Name: {{ userName }}</p>
+	  <p v-else>Loading user information...</p>
   </div>
   <HelloWorld msg="Vite + Vue" />
 </template>
