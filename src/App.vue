@@ -59,6 +59,9 @@ onMounted(async () => {
 	  
 	  <p v-if="userId">User ID: {{ userId }}, Name: {{ userName }}</p>
 	  <p v-else>Loading user information...</p>
+	  
+	  
+	  ver: latest
   </div>
   <HelloWorld msg="Vite + Vue" />
 </template>
