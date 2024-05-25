@@ -8,7 +8,7 @@ const userId = ref<number | null>(null);
 const userName = ref<string | null>(null);
 
 // Initialize Telegram WebApp API
-onMounted(() => {
+onMounted(async () => {
 	if (window.Telegram?.WebApp) {
 		const tg = window.Telegram.WebApp;
 		
@@ -21,9 +21,26 @@ onMounted(() => {
 		if (user) {
 			userId.value = user.id;
 			userName.value = `${user.first_name} ${user.last_name}`;
+			
+			// Send the initialization data to your backend for verification
+			try {
+				const response = await axios.post('http://localhost:3000/verify', {
+					initData: tg.initData,
+					initDataUnsafe: tg.initDataUnsafe
+				});
+				
+				if (response.data.success) {
+					console.log('User verified successfully');
+				} else {
+					console.error('User verification failed');
+				}
+			} catch (error) {
+				console.error('Error verifying user:', error);
+			}
 		} else {
 			console.error('User information is not available.');
 		}
+		
 	} else {
 		console.error('Telegram WebApp API is not available.');
 	}
